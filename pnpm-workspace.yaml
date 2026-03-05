@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - bcrypt
+  - es5-ext
+  - sharp
+  - unrs-resolver
