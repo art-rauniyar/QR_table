@@ -1,0 +1,140 @@
+import clsx from 'clsx';
+import { useSearchParams } from 'next/navigation';
+import { Button } from 'xtreme-ui';
+
+import { TOrder } from '#utils/database/models/order';
+
+import './ordersCard.scss';
+
+const OrdersCard = (props: TOrdersCard) => {
+	const { data, actions, active, reject, setReject, busy, history, details, action, activate, showDetails } = props;
+	const queryParams = useSearchParams();
+	const subTab = queryParams.get('subTab') ?? '';
+
+	const tableName = data.table;
+	const customerName = `${data?.customer?.fname} ${data?.customer?.lname}`;
+
+	// Format timestamps
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		const now = new Date();
+		const diffMs = now.getTime() - date.getTime();
+		const diffMins = Math.floor(diffMs / 60000);
+		const diffHours = Math.floor(diffMs / 3600000);
+		const diffDays = Math.floor(diffMs / 86400000);
+
+		if (diffMins < 60) return `${diffMins}m ago`;
+		if (diffHours < 24) return `${diffHours}h ago`;
+		if (diffDays < 7) return `${diffDays}d ago`;
+
+		return date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+	};
+
+	const OptionButtons = () => {
+		if (!actions) return null;
+
+		if (subTab === 'active') {
+			return (
+				<div className='options'>
+					<Button
+						className='accept'
+						size='mini'
+						icon='f00c' iconType='solid'
+						label={!props.reject ? 'Complete' : 'Yes do it!'}
+						onClick={() => action?.(data._id.toString())}
+						loading={busy}
+					/>
+					{
+						!busy &&
+						<Button className='reject' size='mini'
+							type='primaryDanger' icon='f00d' iconType='solid'
+							label={!reject ? 'Cancel' : 'No Don\'t'}
+							onClick={() => {
+								setReject?.({
+									_id: !reject ? data._id.toString() : null,
+									details: false,
+								});
+							}}
+						/>
+					}
+				</div>
+			);
+		}
+		return (
+			<div className='options'>
+				<Button className='accept' label={!reject ? 'Accept' : 'Yes do it!'}
+					size='mini'
+					icon='f00c' iconType='solid'
+					onClick={() => action?.(data._id.toString())} loading={busy}
+				/>
+				{
+					!busy &&
+					<Button
+						className='reject'
+						size='mini'
+						type='primaryDanger' icon='f00d' iconType='solid'
+						onClick={() => {
+							setReject?.({
+								_id: !reject ? data._id.toString() : null,
+								details: false,
+							});
+						}} label={!reject ? 'Reject' : 'No Don\'t'}
+					/>
+				}
+			</div>
+		);
+	};
+
+	const classList = clsx(
+		'ordersCard',
+		active && 'active',
+		reject && 'reject',
+		busy && 'busy',
+	);
+
+	return (
+		<div className={classList}
+			onClick={() => {
+				!active && !history && setReject?.({ _id: null, details: false });
+				activate(data._id.toString());
+			}}
+		>
+			<div className='content'>
+				<p className='table'>{!reject || details ? `Table: ${tableName}` : 'Are you sure?'}</p>
+				<p className='name'>{!reject || details ? customerName : `Table: ${tableName}`}</p>
+				{
+					history && data.createdAt && (
+						<p className='timestamp'>
+							Created: {formatDate(data.createdAt)}
+							{data.updatedAt && data.updatedAt !== data.createdAt &&
+								<> • Updated: {formatDate(data.updatedAt)}</>
+							}
+						</p>
+					)
+				}
+				{
+					!data?.products?.length
+						? <p className='noContent'>No orders yet</p>
+						: <p className='total rupee' onClick={() => showDetails?.(true)}>{data?.orderTotal}</p>
+				}
+				<OptionButtons />
+			</div>
+		</div>
+	);
+};
+
+export default OrdersCard;
+
+type TOrdersCard = {
+	data: TOrder
+	actions?: boolean
+	history?: boolean
+	active?: boolean
+	reject?: boolean
+	setReject?: (props: { _id: string | null, details: boolean }) => void
+	busy?: boolean
+	details?: boolean
+	action?: (id: string) => void
+	showDetails?: (value: boolean) => void
+	activate: (id: string) => void
+}
