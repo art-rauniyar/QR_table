@@ -54,6 +54,14 @@ const createData = async (props: TDocumentData) => {
 };
 
 export async function GET () {
+	// Block this endpoint in production to prevent accidental data wipes
+	if (process.env.NODE_ENV === 'production') {
+		return new Response(
+			JSON.stringify({ message: 'This endpoint is disabled in production.' }),
+			{ status: 403, headers: { 'Content-Type': 'application/json' } },
+		);
+	}
+
 	await connectDB();
 	try {
 		const start = performance.now();
