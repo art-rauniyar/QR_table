@@ -43,21 +43,20 @@ const MenuEditorItem = (props: TMenuEditorItemProps) => {
 						<p className='menuItemPrice rupee'>{item.price}</p>
 					</div>
 					<div className='menuItemOptions'>
-						<Button
-							icon={item.hidden ? 'f070' : 'f06e'}
-							iconType='solid'
-							type={item.hidden ? 'secondary' : 'primary'}
-							loading={hideSettingsLoading}
+						<div
+							className={`actionBtn ${item.hidden ? 'secondary' : 'primary'}`}
 							onClick={() => onHide(item._id.toString(), !item.hidden)}
 							title={item.hidden ? 'Hidden' : 'Visible'}
-						/>
-						<Button
-							icon='f304'
-							iconType='solid'
-							type='primary'
+						>
+							<Icon code={item.hidden ? 'f070' : 'f06e'} type='solid' size={16} />
+						</div>
+						<div
+							className='actionBtn primary'
 							onClick={() => onEdit(item)}
 							title='Edit'
-						/>
+						>
+							<Icon code='f304' type='solid' size={16} />
+						</div>
 					</div>
 				</>
 			}
