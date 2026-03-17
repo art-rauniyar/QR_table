@@ -203,6 +203,9 @@ const MenuEditor = () => {
 
 	if (profileLoading) return <Spinner fullpage label='Loading Menu...' />;
 
+	const activeCategory = profile?.categories?.[category];
+	const displayedMenus = activeCategory ? menus.filter(m => m.category === activeCategory) : menus;
+
 	return (
 		<div className='menuEditor'>
 			<div className='menuCategoryEditor'>
@@ -253,7 +256,7 @@ const MenuEditor = () => {
 				</div>
 				<div className='menuItemContainer'>
 					{
-						menus.map((item, id) => (
+						displayedMenus.length > 0 ? displayedMenus.map((item, id) => (
 							<MenuEditorItem
 								key={id}
 								item={item}
@@ -261,7 +264,7 @@ const MenuEditor = () => {
 								onHide={onHide}
 								hideSettingsLoading={hideSettingsLoading.includes(item._id.toString())}
 							/>
-						))}
+						)) : <p style={{ color: 'var(--colorContentTertiary)', gridColumn: '1 / -1', textAlign: 'center', padding: '40px 0' }}>No items found in this category.</p>}
 				</div>
 			</div>
 			<Button

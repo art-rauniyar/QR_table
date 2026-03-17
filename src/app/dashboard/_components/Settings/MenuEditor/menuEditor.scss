@@ -45,35 +45,31 @@
 			}
 
 			.menuCategory {
+				display: flex;
+				align-items: center;
 				position: relative;
 				
 				.removeCategoryBtn {
-					position: absolute;
-					top: -8px;
-					right: -8px;
-					background: rgb(var(--colorAlertErrorRGB));
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-left: 8px;
+					background: #d32f2f;
 					color: white;
 					border-radius: 50%;
 					width: 20px;
 					height: 20px;
-					display: flex;
-					align-items: center;
-					justify-content: center;
 					cursor: pointer;
-					opacity: 0;
-					transform: scale(0.8);
 					transition: all 0.2s ease;
 					box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 
 					&:hover {
 						transform: scale(1.1);
 					}
-				}
 
-				&.active {
-					.removeCategoryBtn {
-						opacity: 1;
-						transform: scale(1);
+					i {
+						font-size: 12px !important;
+						color: white !important;
 					}
 				}
 			}
