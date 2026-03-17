@@ -87,6 +87,7 @@ border-color: hsl(var(--colorBrandPrimary));
 			margin: calc(var(--initialHeaderHeight) + 6px) 30px 15px 10px;
 			background-color: var(--colorBackgroundPrimary);
 			box-shadow: 0 0 8px rgb(150 150 150 / 15%);
+			overflow-y: auto;
 
 			&.reject {
 				box-shadow: 0 0 5px rgb(var(--colorAlertErrorRGB));
