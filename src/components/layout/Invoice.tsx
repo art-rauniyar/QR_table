@@ -35,6 +35,7 @@ const Invoice = (props: TInvoiceProps) => {
 					<h6 align='left' className='invoiceHeadingDetails'>Invoice Number: <span>{props.order.invoiceNumber}</span></h6>
 					<h6 align='left' className='invoiceHeadingDetails'>Customer Name: <span>{props?.order?.customer?.fname} {props?.order?.customer?.lname}</span></h6>
 					<h6 align='left' className='invoiceHeadingDetails'>Contact: <span>{props?.order?.customer?.phone}</span></h6>
+					<h6 align='left' className='invoiceHeadingDetails'>Order Status: <span style={{ textTransform: 'capitalize' }}>{props?.order?.state}</span></h6>
 <hr />
 <div className="orderTimeline">
 {props.order.createdAt && (
@@ -50,6 +51,16 @@ Accepted by Restaurant: <span>{new Date(props.order.acceptedAt).toLocaleString('
 {props.order.completedAt && (
 <h6 className="invoiceHeadingDetails">
 Order Completed: <span>{new Date(props.order.completedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+</h6>
+)}
+{props.order.state === 'cancel' && props.order.updatedAt && (
+<h6 className="invoiceHeadingDetails">
+Order Cancelled: <span>{new Date(props.order.updatedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+</h6>
+)}
+{props.order.state === 'reject' && props.order.updatedAt && (
+<h6 className="invoiceHeadingDetails">
+Order Rejected: <span>{new Date(props.order.updatedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
 </h6>
 )}
 </div>
