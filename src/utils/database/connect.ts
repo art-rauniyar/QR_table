@@ -1,4 +1,4 @@
-import { connect } from 'mongoose';
+import mongoose, { connect } from 'mongoose';
 import './models/profile';
 import './models/account';
 import './models/customer';
@@ -13,24 +13,36 @@ if (!process.env.MONGODB_URI) {
 
 const options = {
 	autoIndex: false,
+	bufferCommands: false, // Prevent mongoose from buffering commands when disconnected
 };
-let cached = global.mongoose;
+
+// Define global mongoose cache for Next.js hot-reloads and serverless
+declare global {
+	var mongooseCache: { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null };
+}
+
+let cached = globalThis.mongooseCache;
 
 if (!cached) {
-	cached = global.mongoose = { conn: null, promise: null };
+	cached = globalThis.mongooseCache = { conn: null, promise: null };
 }
 
 async function connectDB () {
-	if (cached.conn) return cached.conn;
+	// Return immediately if connection is already established and active
+	if (cached.conn && mongoose.connection.readyState === 1) {
+		return cached.conn;
+	}
+
 	if (!cached.promise) {
-		console.log('🌿 Connecting to Mongo Server');
+		console.log('🌿 Connecting to Mongo Server...');
 		cached.promise = connect(process.env.MONGODB_URI!, options)
-			.then((mongoose) => {
+			.then((mongooseInstance) => {
 				console.log('🍃 Mongo Connection Established');
-				return mongoose;
+				return mongooseInstance;
 			})
 			.catch((error) => {
 				console.error('🍂 MongoDB Connection Failed: ', error);
+				throw error;
 			});
 	}
 
