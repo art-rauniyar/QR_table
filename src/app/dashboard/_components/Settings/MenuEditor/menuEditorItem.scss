@@ -71,19 +71,19 @@
 
 			&.veg {
 				border: 1px solid #006241;
-				.icon { color: #006241 !important; }
+				.icon, .icon i, .icon svg, .icon path { color: #006241 !important; fill: #006241 !important; }
 			}
 
 			/* stylelint-disable-next-line selector-class-pattern */
 			&.non-veg {
 				border: 1px solid #d32f2f;
-				.icon { color: #d32f2f !important; }
+				.icon, .icon i, .icon svg, .icon path { color: #d32f2f !important; fill: #d32f2f !important; }
 			}
 
 			/* stylelint-disable-next-line selector-class-pattern */
 			&.contains-egg {
 				border: 1px solid #f57c00;
-				.icon { color: #f57c00 !important; }
+				.icon, .icon i, .icon svg, .icon path { color: #f57c00 !important; fill: #f57c00 !important; }
 			}
 
 			.icon {
@@ -174,9 +174,10 @@
 				background-color: #6b7280;
 			}
 
-			* {
+			i, svg, path {
 				font-size: 16px !important;
 				color: white !important;
+				fill: white !important;
 				margin: 0 !important;
 			}
 		}
