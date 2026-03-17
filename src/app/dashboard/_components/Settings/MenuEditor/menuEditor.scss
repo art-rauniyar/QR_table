@@ -124,7 +124,10 @@
 
 	.menuItemEditor {
 		width: 100%;
+		display: flex;
+		flex-direction: column;
 		margin-top: 15px;
+		overflow: hidden;
 
 		.menuItemHeader {
 			width: 100%;
@@ -145,8 +148,8 @@
 		}
 
 		.menuItemContainer {
-			--menuItemSize: 200px;
-			padding: 30px 40px 55px;
+			--menuItemSize: 180px;
+			padding: 20px 35px 55px;
 			display: grid;
 			grid-template-columns: repeat(1, 1fr);
 			gap: 20px;

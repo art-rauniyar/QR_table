@@ -46,19 +46,17 @@ const MenuEditorItem = (props: TMenuEditorItemProps) => {
 						<Button
 							icon={item.hidden ? 'f070' : 'f06e'}
 							iconType='solid'
-							size='mini'
 							type={item.hidden ? 'secondary' : 'primary'}
-							label={isMobile ? undefined : item.hidden ? 'Hidden' : 'Visible'}
 							loading={hideSettingsLoading}
 							onClick={() => onHide(item._id.toString(), !item.hidden)}
+							title={item.hidden ? 'Hidden' : 'Visible'}
 						/>
 						<Button
 							icon='f304'
 							iconType='solid'
-							size='mini'
 							type='primary'
-							label={isMobile ? undefined : 'Edit'}
 							onClick={() => onEdit(item)}
+							title='Edit'
 						/>
 					</div>
 				</>
