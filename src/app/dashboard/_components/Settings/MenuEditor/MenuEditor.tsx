@@ -15,6 +15,7 @@ const MenuEditor = () => {
 	const [editItem, setEditItem] = useState<TMenu>();
 	const [hideSettingsLoading, setHideSettingsLoading] = useState<string[]>([]);
 	const [category, setCategory] = useState(0);
+	const [categoryLoading, setCategoryLoading] = useState(false);
 
 	// Form state for modal
 	const [formData, setFormData] = useState({
@@ -63,6 +64,57 @@ const MenuEditor = () => {
 
 		await profileMutate();
 		setHideSettingsLoading((v) => v.filter((item) => item !== itemId));
+	};
+
+	const onAddCategory = async () => {
+		const newCategory = window.prompt('Enter new category name:');
+		if (!newCategory || !newCategory.trim()) return;
+
+		setCategoryLoading(true);
+		try {
+			const res = await fetch('/api/admin/profile/category', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ category: newCategory }),
+			});
+			const data = await res.json();
+			if (data.status === 200) {
+				toast.success(data.message);
+				await profileMutate();
+			} else {
+				toast.error(data.message || 'Failed to add category');
+			}
+		} catch (error) {
+			toast.error('Error adding category');
+		} finally {
+			setCategoryLoading(false);
+		}
+	};
+
+	const onRemoveCategory = async (catName: string, e: React.MouseEvent) => {
+		e.stopPropagation();
+		if (!window.confirm(`Are you sure you want to remove the '${catName}' category? Items inside will not be deleted, but they might lose their category mapping.`)) return;
+
+		setCategoryLoading(true);
+		try {
+			const res = await fetch('/api/admin/profile/category', {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ category: catName }),
+			});
+			const data = await res.json();
+			if (data.status === 200) {
+				toast.success(data.message);
+				if (category >= profile?.categories?.length! - 1) setCategory(0);
+				await profileMutate();
+			} else {
+				toast.error(data.message || 'Failed to remove category');
+			}
+		} catch (error) {
+			toast.error('Error removing category');
+		} finally {
+			setCategoryLoading(false);
+		}
 	};
 	const onEdit = (item: TMenu) => {
 		setEditItem(item);
@@ -156,7 +208,16 @@ const MenuEditor = () => {
 			<div className='menuCategoryEditor'>
 				<div className='menuCategoryHeader'>
 					<h1 className='menuCategoryHeading'>Menu Categories</h1>
-					<div className='menuCategoryOptions' />
+					<div className='menuCategoryOptions'>
+						<Button 
+							size='mini' 
+							icon='2b' 
+							iconType='solid' 
+							label='Add Category' 
+							onClick={onAddCategory} 
+							loading={categoryLoading} 
+						/>
+					</div>
 				</div>
 				<div className='menuCategoryContainer' ref={categories} onScroll={onCategoryScroll}>
 					{
@@ -167,6 +228,12 @@ const MenuEditor = () => {
 								onClick={() => setCategory(i)}
 							>
 								<span className='title'>{item}</span>
+								{
+									category === i &&
+									<div className='removeCategoryBtn' onClick={(e) => onRemoveCategory(item, e)}>
+										<Icon code='f00d' type='solid' size={12} />
+									</div>
+								}
 							</div>
 						))
 					}
