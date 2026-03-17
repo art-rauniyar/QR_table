@@ -111,7 +111,6 @@
 			font-size: 18px;
 			font-variation-settings: 'wdth' 75, 'wght' 500;
 			margin: 0;
-			padding-right: 80px;
 			display: -webkit-box;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
@@ -143,26 +142,27 @@
 		position: absolute;
 		width: auto;
 		height: auto;
-		top: 10px;
+		bottom: 10px;
 		right: 10px;
 		display: flex;
 		justify-content: flex-end;
 		gap: 8px;
 
-		.menuItemEditButton,
-		.menuItemVisibleButton {
-			width: 35px;
-			height: 35px;
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			overflow: hidden;
-			border-radius: 9999px;
-			color: var(--colorContentPrimary);
-			background-color: var(--colorBackgroundPrimary);
-			border: 1px solid var(--colorContentTertiary);
-			transition: all 0.2s linear;
-			cursor: pointer;
+		button {
+			width: 36px !important;
+			height: 36px !important;
+			padding: 0 !important;
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			border-radius: 50% !important;
+
+			// force children to be visible and correctly sized as icons
+			* {
+				font-size: 16px !important;
+				color: white !important;
+				margin: 0 !important;
+			}
 		}
 	}
 }
