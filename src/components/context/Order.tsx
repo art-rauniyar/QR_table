@@ -17,6 +17,10 @@ const OrderDefault: TOrderInitialType = {
 	placingOrder: false,
 	cancelOrder: noop,
 	cancelingOrder: false,
+	selectedProducts: [],
+	increaseProductQuantity: noop,
+	decreaseProductQuantity: noop,
+	resetSelectedProducts: noop,
 };
 
 export const OrderContext = createContext(OrderDefault);
@@ -27,6 +31,34 @@ export const OrderProvider = ({ children }: TOrderProviderProps) => {
 
 	const [placingOrder, setPlacingOrder] = useState(false);
 	const [cancelingOrder, setCancelingOrder] = useState(false);
+	const [selectedProducts, setSelectedProducts] = useState<Array<TMenuCustom>>([]);
+
+	const increaseProductQuantity = (product: TMenuCustom) => {
+		const selection = [...selectedProducts];
+		if (selectedProducts.some((item) => item._id === product._id)) {
+			selection.forEach((item) => {
+				if (product._id === item._id) item.quantity++;
+			});
+		} else {
+			product.quantity = 1;
+			selection.push(product);
+		}
+		setSelectedProducts(selection);
+	};
+	const decreaseProductQuantity = (product: TMenuCustom) => {
+		let selection = [...selectedProducts];
+		selection.forEach((item) => {
+			if (product._id === item._id) {
+				item.quantity--;
+				if (item.quantity === 0) {
+					const filter = selection.filter((tempItem) => tempItem._id !== product._id);
+					selection = [...filter];
+				}
+			}
+		});
+		setSelectedProducts(selection);
+	};
+	const resetSelectedProducts = () => setSelectedProducts([]);
 
 	const placeOrder = async (products: Array<TMenuCustom>) => {
 		setPlacingOrder(true);
@@ -54,7 +86,10 @@ export const OrderProvider = ({ children }: TOrderProviderProps) => {
 	}, [mutate, session.status]);
 
 	return (
-		<OrderContext.Provider value={{ order, loading, placeOrder, placingOrder, cancelOrder, cancelingOrder }}>
+		<OrderContext.Provider value={{ 
+			order, loading, placeOrder, placingOrder, cancelOrder, cancelingOrder,
+			selectedProducts, increaseProductQuantity, decreaseProductQuantity, resetSelectedProducts
+		}}>
 			{children}
 		</OrderContext.Provider>
 	);
@@ -71,5 +106,9 @@ export type TOrderInitialType = {
 	placingOrder: boolean,
 	cancelOrder: () => void,
 	cancelingOrder: boolean,
+	selectedProducts: Array<TMenuCustom>,
+	increaseProductQuantity: (product: TMenuCustom) => void,
+	decreaseProductQuantity: (product: TMenuCustom) => void,
+	resetSelectedProducts: () => void,
 }
 type TMenuCustom = TMenu & {quantity: number}

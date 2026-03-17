@@ -17,7 +17,7 @@ import './orderPage.scss';
 
 const OrderPage = () => {
 	const session = useSession();
-	const { loading } = useOrder();
+	const { loading, selectedProducts, increaseProductQuantity, decreaseProductQuantity, resetSelectedProducts } = useOrder();
 	const { restaurant } = useRestaurant();
 
 	const menus = restaurant?.menus as Array<TMenuCustom>;
@@ -43,7 +43,6 @@ const OrderPage = () => {
 	const [showInfoCard, setShowInfoCard] = useState(false);
 
 	const [filteredProducts, setFilteredProducts] = useState<Array<TMenuCustom>>(menus);
-	const [selectedProducts, setSelectedProducts] = useState<Array<TMenuCustom>>([]);
 	const [hasImageItems, setHasImageItems] = useState(false);
 	const [hasNonImageItems, setHasNonImageItems] = useState(false);
 
@@ -85,31 +84,6 @@ const OrderPage = () => {
 	const onLoginClick = () => {
 		if (table) return setLoginOpen(true);
 		return params.router.push('/scan');
-	};
-	const increaseProductQuantity = (product: TMenuCustom) => {
-		const selection = [...selectedProducts];
-		if (selectedProducts.some((item) => item._id === product._id)) {
-			selection.forEach((item) => {
-				if (product._id === item._id) item.quantity++;
-			});
-		} else {
-			product.quantity = 1;
-			selection.push(product);
-		}
-		setSelectedProducts(selection);
-	};
-	const decreaseProductQuantity = (product: TMenuCustom) => {
-		let selection = [...selectedProducts];
-		selection.forEach((item) => {
-			if (product._id === item._id) {
-				item.quantity--;
-				if (item.quantity === 0) {
-					const filter = selection.filter((tempItem) => tempItem._id !== product._id);
-					selection = [...filter];
-				}
-			}
-		});
-		setSelectedProducts(selection);
 	};
 
 	useEffect(() => {
